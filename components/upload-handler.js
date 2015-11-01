@@ -1,6 +1,8 @@
 var fs = require('fs');
 var mkdirp = require('mkdirp');
 var hod = require('havenondemand');
+var request = require('request');
+var distance = require('gps-distance');
 var apiKeys = require('./apikeys.js');
 
 client = new hod.HODClient('https://api.havenondemand.com', apiKeys.haven);
@@ -28,8 +30,23 @@ module.exports = function(db) {
     console.log('getting name');
     var data = {'file' : path};
     client.call('recognizebarcodes', data, function(err,resp,body){
-      console.log('built in request ' + JSON.stringify(body));
-      console.log('code is ' + body.barcode[0].text);
+
+      //if code retrieved
+      if(body && body.barcode && body.barcode[0] && body.barcode[0].text) {
+        var code = body.barcode[0].text;
+        console.log('code is ' + code);
+
+        request('http://api.upcdatabase.org/json/' + apiKeys.upc + '/' + code, function (error, response, body) {
+          if (!error && response.statusCode == 200) {
+            body = JSON.parse(body);
+
+            var item = body.itemname || body.description;
+            console.log('item is ' + item);
+          }
+        });
+      } else {
+        console.log('bad picture');
+      }
     });
   }
 
@@ -72,20 +89,30 @@ module.exports = function(db) {
     });
   }
 
-  uploadHandler.getImages = function(req, res) {
+  uploadHandler.getImage = function(req, res) {
+
+    //assumes allImages is a nicely behaved array of images from model/
+    function getImages(srcLat, srcLon, allImages) {
+      var filteredImages = [];
+
+      allImages.forEach(function(image) {
+        if(distance(srcLat, srcLon, image.lat, image.lon) < 3) {
+          filteredImages.push(image);
+        }
+      });
+
+      return filteredImages;
+    }
+
+
     db.image.findAll()
     .then(function(data){
-      var imageData = {
-        name: data.name,
-        path: IMAGEPATH + data.name,
-        lon: data.lon,
-        lat: data.lat
-      }
+      var imageData = getImages(req.body.lat, req.body.lon, data);
       res.json(imageData, 200);
     }, function(error){
       res.json({error: "Invalid Request"}, 400);
     });
-  }
+
 
   return uploadHandler;
 
