@@ -2,7 +2,7 @@ var fs = require('fs');
 var mkdirp = require('mkdirp');
 
 module.exports = function(db) {
-  var IMAGEPATH = "./img";
+  var IMAGEPATH = "./img/";
   var uploadHandler = {};
 
   function createImage(name, location, callback){
