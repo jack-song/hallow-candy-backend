@@ -1,5 +1,9 @@
 var fs = require('fs');
 var mkdirp = require('mkdirp');
+var hod = require('havenondemand');
+var apiKeys = require('./apikeys.js');
+
+client = new hod.HODClient('https://api.havenondemand.com', apiKeys.haven);
 
 module.exports = function(db) {
   var IMAGEPATH = "./img/";
@@ -14,6 +18,18 @@ module.exports = function(db) {
       console.log(data);
       callback(data);
     });
+  }
+
+  function getName(path) {
+    console.log('getting name');
+    var data = {'file' : path};
+    client.call('recognizebarcodes', data, function(err,resp,body){
+      console.log('built in request ' + JSON.stringify(body));
+      console.log('code is ' + body.barcode[0].text);
+
+
+    });
+
   }
 
   uploadHandler.uploadImage = function(req, res) {
@@ -42,6 +58,7 @@ module.exports = function(db) {
             res.json({'response':"Error"});
           } else {
             res.json({'response':"Saved"});
+            getName(newPath);
           }
         });
       });
