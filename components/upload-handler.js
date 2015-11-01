@@ -18,7 +18,7 @@ module.exports = function(db) {
       callback();
     }, function(error){
       console.log(error);
-     res.json({'response':"Error"});
+      res.json({'response':"Error"});
     });
   }
 
@@ -28,10 +28,7 @@ module.exports = function(db) {
     client.call('recognizebarcodes', data, function(err,resp,body){
       console.log('built in request ' + JSON.stringify(body));
       console.log('code is ' + body.barcode[0].text);
-
-
     });
-
   }
 
   uploadHandler.uploadImage = function(req, res) {
