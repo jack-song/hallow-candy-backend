@@ -5,6 +5,17 @@ module.exports = function(db) {
   var IMAGEPATH = "./img";
   var uploadHandler = {};
 
+  function createImage(name, location, callback){
+    db.image.create({
+      name: name,
+      lat: location.lat,
+      lon: location.lon
+    }).success(function(data){
+      console.log(data);
+      callback(data);
+    });
+  }
+
   uploadHandler.uploadImage = function(req, res) {
     console.log(req.files.image.originalFilename);
     console.log(req.files.image.path);
