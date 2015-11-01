@@ -126,8 +126,7 @@ module.exports = function(db) {
 
   uploadHandler.imgFile =  function (req, res){
     file = req.params.file;
-    var dirname = "./";
-    var img = fs.readFileSync(dirname + "/img/" + file);
+    var img = fs.readFileSync( "/img/" + file);
     res.writeHead(200, {'Content-Type': 'image/jpg' });
     res.end(img, 'binary');
   }
