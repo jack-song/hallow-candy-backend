@@ -20,7 +20,7 @@ module.exports = function(db) {
       callback();
     }, function(error){
       console.log(error);
-     res.json({'response':"Error"});
+      res.json({'response':"Error"});
     });
   }
 
@@ -46,7 +46,6 @@ module.exports = function(db) {
         console.log('bad picture');
       }
     });
-
   }
 
   uploadHandler.uploadImage = function(req, res) {

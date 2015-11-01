@@ -6,11 +6,6 @@ var port     = process.env.PORT || 8080;
 var dbParams  = require('./config').dbParams;
 var Sequelize = require('sequelize-mysql').sequelize;
 
-
-
- console.log('efw');
-// Routes
-
 var sequelize = new Sequelize(dbParams.database, dbParams.user, dbParams.pass, {
     host: dbParams.host,
     port: dbParams.port,
@@ -18,18 +13,10 @@ var sequelize = new Sequelize(dbParams.database, dbParams.user, dbParams.pass, {
     dialect: dbParams.dialect
 });
 
-
- console.log(sequelize);
-
-
 var db = require('./model')(sequelize).db;
 
-sequelize.sync().then(function(){
-  console.log("DATABASE");
-}, function(){
-  console.log("DATABASE!!!!!!!!!");
-});
-console.log('123');
+sequelize.sync();
+
 sequelize
     .authenticate()
     .complete(function(err) {
