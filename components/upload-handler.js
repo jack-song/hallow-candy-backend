@@ -96,7 +96,7 @@ module.exports = function(db) {
       var filteredImages = [];
 
       allImages.forEach(function(image) {
-        if(distance(srcLat, srcLon, image.lat, image.lon) < 3) {
+        if(distance(parseFloat(srcLat), parseFloat(srcLon), parseFloat(image.lat), parseFloat(image.lon)) < 3) {
           filteredImages.push(image);
         }
       });
@@ -108,11 +108,13 @@ module.exports = function(db) {
     db.image.findAll()
     .then(function(data){
       var imageData = getImages(req.body.lat, req.body.lon, data);
-      res.json(imageData, 200);
+      console.log(data);
+      console.log(imageData);
+      res.json(data, 200);
     }, function(error){
       res.json({error: "Invalid Request"}, 400);
     });
-
+  }
 
   return uploadHandler;
 
