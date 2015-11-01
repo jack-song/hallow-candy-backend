@@ -8,4 +8,6 @@ module.exports = function(app, db) {
   app.post('/upload', uploadHandler.uploadImage);
 
   app.post('/getImages', uploadHandler.getImage);
+
+  app.get('/img/:file', uploadHandler.imgFile);
 };
