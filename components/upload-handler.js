@@ -1,6 +1,7 @@
 var fs = require('fs');
 var mkdirp = require('mkdirp');
 var hod = require('havenondemand');
+var request = require('request');
 var apiKeys = require('./apikeys.js');
 
 client = new hod.HODClient('https://api.havenondemand.com', apiKeys.haven);
@@ -24,10 +25,23 @@ module.exports = function(db) {
     console.log('getting name');
     var data = {'file' : path};
     client.call('recognizebarcodes', data, function(err,resp,body){
-      console.log('built in request ' + JSON.stringify(body));
-      console.log('code is ' + body.barcode[0].text);
 
+      //if code retrieved
+      if(body && body.barcode && body.barcode[0] && body.barcode[0].text) {
+        var code = body.barcode[0].text;
+        console.log('code is ' + code);
 
+        request('http://api.upcdatabase.org/json/' + apiKeys.upc + '/' + code, function (error, response, body) {
+          if (!error && response.statusCode == 200) {
+            body = JSON.parse(body);
+
+            var item = body.itemname || body.description;
+            console.log('item is ' + item);
+          }
+        });
+      } else {
+        console.log('bad picture');
+      }
     });
 
   }
@@ -57,8 +71,8 @@ module.exports = function(db) {
             console.log(err);
             res.json({'response':"Error"});
           } else {
-            res.json({'response':"Saved"});
             getName(newPath);
+            res.json({'response':"Saved"});
           }
         });
       });
