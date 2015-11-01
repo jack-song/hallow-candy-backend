@@ -8,12 +8,13 @@ var apiKeys = require('./apikeys.js');
 client = new hod.HODClient('https://api.havenondemand.com', apiKeys.haven);
 
 module.exports = function(db) {
-  var IMAGEPATH = "./img/";
+  var IMAGEPATH = "/img/";
   var uploadHandler = {};
 
 
 
   function createImage(name, location, callback){
+    console.log('createImages')
     db.image.create({
       name: name,
       lat: location.lat,
@@ -80,6 +81,7 @@ module.exports = function(db) {
               lat : req.body.lat
             };
             createImage(fileName,location, function(){
+              console.log("halloe")
               res.json({'response':"Saved"});
               getName(newPath);
             });
