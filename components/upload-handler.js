@@ -108,9 +108,7 @@ module.exports = function(db) {
     db.image.findAll()
     .then(function(data){
       var imageData = getImages(req.body.lat, req.body.lon, data);
-      console.log(data);
-      console.log(imageData);
-      res.json(data, 200);
+      res.json(imageData, 200);
     }, function(error){
       res.json({error: "Invalid Request"}, 400);
     });
