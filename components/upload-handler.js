@@ -2,6 +2,7 @@ var fs = require('fs');
 var mkdirp = require('mkdirp');
 var hod = require('havenondemand');
 var request = require('request');
+var distance = require('gps-distance');
 var apiKeys = require('./apikeys.js');
 
 client = new hod.HODClient('https://api.havenondemand.com', apiKeys.haven);
@@ -15,9 +16,11 @@ module.exports = function(db) {
       name: name,
       lat: location.lat,
       lon: location.lon
-    }).success(function(data){
-      console.log(data);
-      callback(data);
+    }).then(function(data){
+      callback();
+    }, function(error){
+      console.log(error);
+     res.json({'response':"Error"});
     });
   }
 
@@ -47,8 +50,8 @@ module.exports = function(db) {
   }
 
   uploadHandler.uploadImage = function(req, res) {
-    console.log(req.files.image.originalFilename);
-    console.log(req.files.image.path);
+    console.log (req.body);
+    var fileName = req.files.image.originalFilename;
 
     fs.readFile(req.files.image.path, function (readErr, data){
       console.log('read file');
@@ -57,7 +60,7 @@ module.exports = function(db) {
         console.log('readerror: ' + readErr);
       }
 
-      var newPath = IMAGEPATH + req.files.image.originalFilename;
+      var newPath = IMAGEPATH + fileName;
 
       console.log(newPath);
 
@@ -71,8 +74,14 @@ module.exports = function(db) {
             console.log(err);
             res.json({'response':"Error"});
           } else {
-            getName(newPath);
-            res.json({'response':"Saved"});
+            var location = {
+              lon : req.body.lon,
+              lat : req.body.lat
+            };
+            createImage(fileName,location, function(){
+              res.json({'response':"Saved"});
+              getName(newPath);
+            });
           }
         });
       });
@@ -80,6 +89,20 @@ module.exports = function(db) {
   }
 
   uploadHandler.getImage = function(req, res) {
+
+    //assumes allImages is a nicely behaved array of images from model/
+    function getImages(srcLat, srcLon, allImages) {
+      var filteredImages = [];
+
+      allImages.forEach(function(image) {
+        if(distance(srcLat, srcLon, image.lat, image.lon) < 3) {
+          filteredImages.push(image);
+        }
+      });
+
+      return filteredImages;
+    }
+
     file = req.params.file;
     var img = fs.readFileSync(IMAGEPATH + file);
     res.writeHead(200, {'Content-Type': 'image/jpg' });

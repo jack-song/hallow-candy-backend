@@ -6,9 +6,18 @@ module.exports = function(sequelize) {
   db = {};
 
   db.image = sequelize.define('image', {
-    name: Sequelize.STRING,
-    lat: Sequelize.FLOAT,
-    lon: Sequelize.FLOAT
+    name: {
+      type:Sequelize.STRING,
+      default: "Hello"
+    },
+    lat: {
+      type:Sequelize.STRING,
+      default: "World"
+    },
+    lon: {
+      type:Sequelize.STRING,
+      default: "Julie"
+    }
   });
 
   return {
