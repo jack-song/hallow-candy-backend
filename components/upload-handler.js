@@ -93,11 +93,19 @@ module.exports = function(db) {
 
     //assumes allImages is a nicely behaved array of images from model/
     function getImages(srcLat, srcLon, allImages) {
-      var filteredImages = [];
+      var filteredImages = {
+        data: []
+      };
 
       allImages.forEach(function(image) {
         if(distance(parseFloat(srcLat), parseFloat(srcLon), parseFloat(image.lat), parseFloat(image.lon)) < 3) {
-          filteredImages.push(image);
+          var data = {
+            name: image.name,
+            path: IMAGEPATH + image.name,
+            lon: image.lon,
+            lat: image.lat
+          };
+          filteredImages.data.push(data);
         }
       });
 
