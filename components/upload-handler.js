@@ -14,9 +14,11 @@ module.exports = function(db) {
       name: name,
       lat: location.lat,
       lon: location.lon
-    }).success(function(data){
-      console.log(data);
-      callback(data);
+    }).then(function(data){
+      callback();
+    }, function(error){
+      console.log(error);
+     res.json({'response':"Error"});
     });
   }
 
@@ -33,8 +35,8 @@ module.exports = function(db) {
   }
 
   uploadHandler.uploadImage = function(req, res) {
-    console.log(req.files.image.originalFilename);
-    console.log(req.files.image.path);
+    console.log (req.body);
+    var fileName = req.files.image.originalFilename;
 
     fs.readFile(req.files.image.path, function (readErr, data){
       console.log('read file');
@@ -43,7 +45,7 @@ module.exports = function(db) {
         console.log('readerror: ' + readErr);
       }
 
-      var newPath = IMAGEPATH + req.files.image.originalFilename;
+      var newPath = IMAGEPATH + fileName;
 
       console.log(newPath);
 
@@ -57,8 +59,14 @@ module.exports = function(db) {
             console.log(err);
             res.json({'response':"Error"});
           } else {
-            res.json({'response':"Saved"});
-            getName(newPath);
+            var location = {
+              lon : req.body.lon,
+              lat : req.body.lat
+            };
+            createImage(fileName,location, function(){
+              res.json({'response':"Saved"});
+              getName(newPath);
+            });
           }
         });
       });
