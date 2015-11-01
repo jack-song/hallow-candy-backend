@@ -5,6 +5,7 @@
   "dependencies": {
     "connect": "~2.14.4",
     "express": "~4.0.0",
-    "mkdirp": "^0.5.1"
+    "mkdirp": "^0.5.1",
+    "sequelize-mysql": "^1.7.0"
   }
 }
