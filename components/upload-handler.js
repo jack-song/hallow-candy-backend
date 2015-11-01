@@ -9,6 +9,8 @@ module.exports = function(db) {
   var IMAGEPATH = "./img/";
   var uploadHandler = {};
 
+
+
   function createImage(name, location, callback){
     db.image.create({
       name: name,
@@ -70,12 +72,19 @@ module.exports = function(db) {
     });
   }
 
-  uploadHandler.getImage = function(req, res) {
-    file = req.params.file;
-    var img = fs.readFileSync(IMAGEPATH + file);
-    res.writeHead(200, {'Content-Type': 'image/jpg' });
-    res.end(img, 'binary');
-
+  uploadHandler.getImages = function(req, res) {
+    db.image.findAll()
+    .then(function(data){
+      var imageData = {
+        name: data.name,
+        path: IMAGEPATH + data.name,
+        lon: data.lon,
+        lat: data.lat
+      }
+      res.json(imageData, 200);
+    }, function(error){
+      res.json({error: "Invalid Request"}, 400);
+    });
   }
 
   return uploadHandler;

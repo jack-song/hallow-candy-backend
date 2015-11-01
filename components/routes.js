@@ -7,5 +7,5 @@ module.exports = function(app, db) {
 
   app.post('/upload', uploadHandler.uploadImage);
 
-  app.get('/uploads/:file', uploadHandler.getImage);
+  app.get('/getImages', uploadHandler.getImages);
 };
