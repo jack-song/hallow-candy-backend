@@ -31,7 +31,7 @@ module.exports = function(db) {
   function getName(path) {
     console.log('getting name');
     var data = {'file' : path};
-    client.call('recognizebarcodes', data, function(err,resp,body){
+    // client.call('recognizebarcodes', data, function(err,resp,body){
 
       //if code retrieved
       if(body && body.barcode && body.barcode[0] && body.barcode[0].text) {
@@ -49,7 +49,7 @@ module.exports = function(db) {
       } else {
         console.log('bad picture');
       }
-    });
+    // });
   }
 
   uploadHandler.uploadImage = function(req, res) {
