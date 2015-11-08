@@ -7,6 +7,7 @@
     "express": "~4.0.0",
     "gps-distance": "0.0.4",
     "havenondemand": "^1.0.1",
+    "lwip": "0.0.8",
     "mkdirp": "^0.5.1",
     "request": "^2.65.0",
     "sequelize-mysql": "^1.7.0"
